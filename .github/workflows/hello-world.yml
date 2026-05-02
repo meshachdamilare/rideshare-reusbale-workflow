@@ -1,0 +1,13 @@
+name: Hello World Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  say-hello:
+    runs-on: [self-hosted, mesh-runner-set]
+    steps:
+      - name: Echo hello world
+        run: echo "hello world"

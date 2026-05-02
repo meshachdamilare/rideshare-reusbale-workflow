@@ -1,0 +1,18 @@
+githubConfigUrl: https://github.com/teleios-community
+githubConfigSecret: github-pat-secret
+
+minRunners: 1
+maxRunners: 5
+
+controllerServiceAccount:
+  namespace: arc-systems
+  name: arc-gha-rs-controller
+
+template:
+  spec:
+    containers:
+    - name: runner
+      image: ghcr.io/actions/actions-runner:latest
+      command:
+      - /home/runner/run.sh
+    restartPolicy: Never
