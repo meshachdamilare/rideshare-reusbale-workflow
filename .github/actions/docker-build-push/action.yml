@@ -1,0 +1,43 @@
+name: Docker Build and Push
+description: Builds and pushes Docker image to AWS ECR
+
+inputs:
+  aws-region:
+    required: true
+  ecr-repository:
+    required: true
+  image-tag:
+    required: true
+  aws-access-key-id:
+    required: true
+  aws-secret-access-key:
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ inputs.aws-access-key-id }}
+        aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
+        aws-region: ${{ inputs.aws-region }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Build Docker Image
+      shell: bash
+      run: |
+        docker build -t ${{ steps.login-ecr.outputs.registry }}/${{ inputs.ecr-repository }}:${{ inputs.image-tag }} .
+
+    - name: Push Docker Image to ECR
+      shell: bash
+      run: |
+        docker push ${{ steps.login-ecr.outputs.registry }}/${{ inputs.ecr-repository }}:${{ inputs.image-tag }}
+
+    - name: Print Image URI
+      shell: bash
+      run: |
+        echo "Image pushed: ${{ steps.login-ecr.outputs.registry }}/${{ inputs.ecr-repository }}:${{ inputs.image-tag }}"
