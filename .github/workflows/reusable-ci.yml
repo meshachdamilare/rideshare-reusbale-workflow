@@ -12,7 +12,7 @@ on:
       runs-on:
         required: false
         type: string
-        default: mesh-runner-set
+        default: mh-runner-set
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
