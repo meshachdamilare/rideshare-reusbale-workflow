@@ -110,7 +110,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build and Push Docker Image
-        uses: meshachdamilare/rideshare-workflows/.github/actions/docker-build-push@main
+        uses: meshachdamilare/rideshare-reusbale-workflow/.github/actions/docker-build-push@main
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
