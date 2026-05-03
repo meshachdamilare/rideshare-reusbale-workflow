@@ -1,4 +1,4 @@
-githubConfigUrl: https://github.com/meshachdamilare/mesh-github-runner
+githubConfigUrl:  https://github.com/meshachdamilare/rideshare-reusbale-workflow
 githubConfigSecret: mh-github-secret
 
 runnerScaleSetName: mh-runner-set
