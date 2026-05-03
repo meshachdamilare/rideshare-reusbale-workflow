@@ -1,8 +1,10 @@
-githubConfigUrl: https://github.com/teleios-community
-githubConfigSecret: github-pat-secret
+githubConfigUrl: https://github.com/meshachdamilare/mesh-github-runner
+githubConfigSecret: mh-github-secret
+
+runnerScaleSetName: mh-runner-set
 
 minRunners: 1
-maxRunners: 5
+maxRunners: 6
 
 controllerServiceAccount:
   namespace: arc-systems

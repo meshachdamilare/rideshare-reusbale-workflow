@@ -7,7 +7,7 @@ on:
 
 jobs:
   say-hello:
-    runs-on: [self-hosted, mesh-runner-set]
+    runs-on:  mh-runner-set 
     steps:
       - name: Echo hello world
         run: echo "hello world"
