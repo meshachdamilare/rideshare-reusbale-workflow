@@ -1,0 +1,53 @@
+githubConfigUrl: https://github.com/meshachdamilare/rideshare-trip-service
+githubConfigSecret: mh-github-secret
+
+runnerScaleSetName: mh-runner-trip
+
+minRunners: 1
+maxRunners: 6
+
+controllerServiceAccount:
+  namespace: arc-systems
+  name: arc-gha-rs-controller
+
+template:
+  spec:
+    initContainers:
+    - name: init-dind-externals
+      image: ghcr.io/actions/actions-runner:latest
+      command: ["cp", "-r", "-v", "/home/runner/externals/.", "/home/runner/tmpDir/"]
+      volumeMounts:
+      - name: dind-externals
+        mountPath: /home/runner/tmpDir
+    containers:
+    - name: runner
+      image: ghcr.io/actions/actions-runner:latest
+      command:
+      - /home/runner/run.sh
+      env:
+      - name: DOCKER_HOST
+        value: unix:///var/run/docker.sock
+      volumeMounts:
+      - name: work
+        mountPath: /home/runner/_work
+      - name: dind-sock
+        mountPath: /var/run
+    - name: dind
+      image: docker:dind
+      securityContext:
+        privileged: true
+      volumeMounts:
+      - name: work
+        mountPath: /home/runner/_work
+      - name: dind-sock
+        mountPath: /var/run
+      - name: dind-externals
+        mountPath: /home/runner/externals
+    volumes:
+    - name: work
+      emptyDir: {}
+    - name: dind-sock
+      emptyDir: {}
+    - name: dind-externals
+      emptyDir: {}
+    restartPolicy: Never

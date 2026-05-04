@@ -83,7 +83,7 @@ jobs:
         if: steps.detect.outputs.lang == 'python'
         run: |
           pip install pytest
-          pytest --tb=short
+          pytest --tb=short; code=$?; [ $code -eq 5 ] && echo "No tests collected, skipping" || exit $code
 
       # ── Go
       - name: Setup Go
@@ -116,4 +116,4 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
           ecr-repository: ${{ inputs.ecr-repository }}
-          image-tag: ${{ github.sha }}
+          image-tag: ${{ inputs.service-name }}-${{ github.sha }}
