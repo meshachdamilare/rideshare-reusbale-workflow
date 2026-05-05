@@ -83,7 +83,12 @@ jobs:
         if: steps.detect.outputs.lang == 'python'
         run: |
           pip install pytest
-          pytest --tb=short; code=$?; [ $code -eq 5 ] && echo "No tests collected, skipping" || exit $code
+          pytest --tb=short || EXIT_CODE=$?
+          if [ "${EXIT_CODE:-0}" -eq 5 ]; then
+            echo "No tests collected, skipping"
+          elif [ "${EXIT_CODE:-0}" -ne 0 ]; then
+            exit $EXIT_CODE
+          fi
 
       # ── Go
       - name: Setup Go
