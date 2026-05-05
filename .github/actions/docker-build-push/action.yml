@@ -1,5 +1,5 @@
 name: Docker Build and Push
-description: Builds and pushes Docker image to AWS ECR
+description: Builds and pushes Docker image to AWS ECR using BuildKit
 
 inputs:
   aws-region:
@@ -27,15 +27,19 @@ runs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
 
-    - name: Build Docker Image
+    - name: Set up Docker Buildx with BuildKit
       shell: bash
       run: |
-        docker build -t ${{ steps.login-ecr.outputs.registry }}/${{ inputs.ecr-repository }}:${{ inputs.image-tag }} .
+        docker buildx create --name mybuilder --driver remote tcp://localhost:1234 --use
+        docker buildx inspect --bootstrap
 
-    - name: Push Docker Image to ECR
+    - name: Build and Push Docker Image
       shell: bash
       run: |
-        docker push ${{ steps.login-ecr.outputs.registry }}/${{ inputs.ecr-repository }}:${{ inputs.image-tag }}
+        docker buildx build \
+          --push \
+          -t ${{ steps.login-ecr.outputs.registry }}/${{ inputs.ecr-repository }}:${{ inputs.image-tag }} \
+          .
 
     - name: Print Image URI
       shell: bash

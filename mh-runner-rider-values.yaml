@@ -12,13 +12,6 @@ controllerServiceAccount:
 
 template:
   spec:
-    initContainers:
-    - name: init-dind-externals
-      image: ghcr.io/actions/actions-runner:latest
-      command: ["cp", "-r", "/home/runner/externals/.", "/home/runner/tmpDir/"]
-      volumeMounts:
-      - name: dind-externals
-        mountPath: /home/runner/tmpDir
     containers:
     - name: runner
       image: ghcr.io/actions/actions-runner:latest
@@ -29,29 +22,22 @@ template:
       env:
       - name: RUNNER_ALLOW_RUNASROOT
         value: "1"
-      - name: DOCKER_HOST
-        value: unix:///var/run/docker.sock
+      - name: BUILDKIT_HOST
+        value: tcp://localhost:1234
       volumeMounts:
       - name: work
         mountPath: /home/runner/_work
-      - name: dind-sock
-        mountPath: /var/run
-    - name: dind
-      image: docker:dind
+    - name: buildkitd
+      image: moby/buildkit:latest
+      args:
+      - --addr
+      - tcp://0.0.0.0:1234
       securityContext:
         privileged: true
       volumeMounts:
       - name: work
         mountPath: /home/runner/_work
-      - name: dind-sock
-        mountPath: /var/run
-      - name: dind-externals
-        mountPath: /home/runner/externals
     volumes:
     - name: work
-      emptyDir: {}
-    - name: dind-sock
-      emptyDir: {}
-    - name: dind-externals
       emptyDir: {}
     restartPolicy: Never
